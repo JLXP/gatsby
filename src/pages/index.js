@@ -4,15 +4,64 @@ import { Link, graphql } from "gatsby"
 import Bio from "../components/bio"
 import Layout from "../components/layout"
 import Seo from "../components/seo"
+import Img from "gatsby-image"
+import styled from "styled-components"
+
+const Post = styled.div`
+  display: flex;
+`
+
+const ContentPublish = styled.div`
+display:flex;
+flex-direction:row;
+`
+
+const PostImage = styled.div`
+  flex: 25%;
+  margin-right: 1rem;
+  border-radius:10px;
+`
+
+const PostText = styled.div`
+  flex: 75%;
+`
+
+const Title = styled.span`
+font-size: 28px;
+text-decoration: none;
+color:#508991;
+
+:hover{
+  color:#75DDDD;
+}
+`
+const Subtitle = styled.p`
+font-size: 16px;
+text-decoration: none;
+color:#172a3a;
+`
+const Publish = styled.p`
+font-size: 14px;
+text-decoration: none;
+color:#508991;
+`
+const Author = styled.p`
+font-size: 14px;
+text-decoration: none;
+color:#004346;
+`
+
 
 const BlogIndex = ({ data, location }) => {
-  const siteTitle = data.site.siteMetadata?.title || `Title`
-  const posts = data.allMarkdownRemark.nodes
+  const siteTitle = data.site.siteMetadata.title  
+  const posts = data.allContentfulPost.edges
+  
 
   if (posts.length === 0) {
     return (
+      
       <Layout location={location} title={siteTitle}>
-        <Seo title="All posts" />
+        <Seo title="Games Blog" />
         <Bio />
         <p>
           No blog posts found. Add markdown posts to "content/blog" (or the
@@ -24,38 +73,41 @@ const BlogIndex = ({ data, location }) => {
   }
 
   return (
+
     <Layout location={location} title={siteTitle}>
-      <Seo title="All posts" />
+      <Seo title="Games Blog" />
       <Bio />
       <ol style={{ listStyle: `none` }}>
         {posts.map(post => {
-          const title = post.frontmatter.title || post.fields.slug
+          const title = post.node.title || post.node.slug
+          const subtitle = post.node.subtitle || post.node.slug
+          const author = post.node.author || post.node.slug
+          const image = post.node.imagen.fluid || post.node.slug
+          
 
           return (
-            <li key={post.fields.slug}>
-              <article
-                className="post-list-item"
-                itemScope
-                itemType="http://schema.org/Article"
-              >
+            <Post key={post.node.slug}>
+              <PostImage>
+                  <Img fluid={image} style={{borderRadius:"10px"}}></Img>
+              </PostImage>
+              <PostText>
                 <header>
-                  <h2>
-                    <Link to={post.fields.slug} itemProp="url">
-                      <span itemProp="headline">{title}</span>
-                    </Link>
-                  </h2>
-                  <small>{post.frontmatter.date}</small>
+                  
+                  <Link to={post.node.slug} itemProp="url" style={{borderRadius:"10px"}}>
+                      <Title itemProp="headline">{title}</Title>
+                  </Link>
+                  
                 </header>
                 <section>
-                  <p
-                    dangerouslySetInnerHTML={{
-                      __html: post.frontmatter.description || post.excerpt,
-                    }}
-                    itemProp="description"
-                  />
+                  <Subtitle>{subtitle}</Subtitle>
                 </section>
-              </article>
-            </li>
+                <section>
+                  <ContentPublish>
+                    <Publish>Published 4 hours ago, by: </Publish><Author>{author}</Author>
+                  </ContentPublish>
+                </section>
+              </PostText>
+            </Post>
           )
         })}
       </ol>
@@ -72,16 +124,21 @@ export const pageQuery = graphql`
         title
       }
     }
-    allMarkdownRemark(sort: { fields: [frontmatter___date], order: DESC }) {
-      nodes {
-        excerpt
-        fields {
-          slug
-        }
-        frontmatter {
-          date(formatString: "MMMM DD, YYYY")
+    allContentfulPost{
+      edges{
+        node{
           title
-          description
+          subtitle
+          description{
+            description
+          }
+          author
+          slug
+          imagen{
+            fluid{
+              ...GatsbyContentfulFluid
+            }     
+          }
         }
       }
     }

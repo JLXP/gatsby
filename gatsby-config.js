@@ -1,14 +1,18 @@
+require("dotenv").config({
+  path: `.env.${process.env.NODE_ENV}`,
+})
+
 module.exports = {
   siteMetadata: {
-    title: `Gatsby Starter Blog`,
+    title: `Game Blog`,
     author: {
-      name: `Kyle Mathews`,
-      summary: `who lives and works in San Francisco building useful things.`,
+      name: `Javier`,
+      summary: `who lives and works in Yucatán, México building useful things.`,
     },
     description: `A starter blog demonstrating what Gatsby can do.`,
     siteUrl: `https://gatsbystarterblogsource.gatsbyjs.io/`,
     social: {
-      twitter: `kylemathews`,
+      twitter: `JavierXool`,
     },
   },
   plugins: [
@@ -51,6 +55,7 @@ module.exports = {
     },
     `gatsby-transformer-sharp`,
     `gatsby-plugin-sharp`,
+    
     // {
     //   resolve: `gatsby-plugin-google-analytics`,
     //   options: {
@@ -126,5 +131,13 @@ module.exports = {
     // this (optional) plugin enables Progressive Web App + Offline functionality
     // To learn more, visit: https://gatsby.dev/offline
     // `gatsby-plugin-offline`,
+    {
+      resolve: `gatsby-source-contentful`,
+      options: {
+        spaceId: `e7afmbvaapbm`,
+        accessToken: `db4gydeLM0uiExcC_BOrJ4HZE7RFoP2uVCVJPB8mrYM`,
+      },
+    },
+    
   ],
 }
